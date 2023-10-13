@@ -16,4 +16,7 @@ make it as an extenssion
 give options to add color palette
 #-ahmed-upload to github
 back as excap
+add dropdown options
+search filter fix fuzzy finder
+change text coloring for bgs
  
