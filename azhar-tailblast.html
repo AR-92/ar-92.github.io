@@ -76,7 +76,7 @@
     </div>
      <!-- model div -->
 
-     <!-- alpine div start -->
+     <!-- tailBlast div start -->
     <div
       x-on:mousedown="isDragging = true, xOffset = $event.clientX - left, yOffset = $event.clientY - top"
       x-on:mousemove="if (isDragging) { top = $event.clientY - yOffset, left = $event.clientX - xOffset }"
@@ -1486,17 +1486,7 @@
               </div>
             </div>
           </div>
-          <div class="flex-1">
-            <input
-              placeholder=""
-              class="bg-transparent p-1 px-2 appearance-none outline-none h-full w-full text-gray-800"
-            />
-          </div>
         </div>
-        <hr class="my-2" />
-        <!-- <div class="py-2">Add Inner Content Here ...</div>
-        <textarea name="" class="p-4" id="" cols="30" rows="1" placeholder="Add Inner Content Here ..."> </textarea>
-        <hr  class="my-5 "> -->
         <div
           class="flex justify-between items-center hover:bg-green-100 text-green-500 p-2 rounded-lg"
         >
@@ -1519,63 +1509,8 @@
           </div>
           <div class="text-gray-500 dark:group-hover:text-slate-100"></div>
         </div>
-        <div
-          class="flex justify-between items-center hover:bg-orange-100 text-orange-500 p-2 rounded-lg"
-        >
-          <div class="flex gap-3">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="w-5 h-5 m-auto"
-              viewBox="0 0 512 512"
-            >
-              <path
-                fill="none"
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="32"
-                d="M256 112v288M400 256H112"
-              />
-            </svg>
-            <div class="m-auto">Add Attribute</div>
-          </div>
-          <div class="text-gray-500 dark:group-hover:text-slate-100"></div>
-        </div>
-        <div
-          class="flex justify-between items-center hover:bg-purple-100 text-purple-500 p-2 rounded-lg"
-        >
-          <div class="flex gap-3">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="w-5 h-5 m-auto"
-              viewBox="0 0 512 512"
-            >
-              <rect
-                x="32"
-                y="48"
-                width="448"
-                height="416"
-                rx="48"
-                ry="48"
-                fill="none"
-                stroke="currentColor"
-                stroke-linejoin="round"
-                stroke-width="32"
-              ></rect>
-              <path
-                fill="none"
-                stroke="currentColor"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="32"
-                d="M96 112l80 64-80 64M192 240h64"
-              ></path>
-            </svg>
-            <div class="m-auto">Add to Html Templates</div>
-          </div>
-          <div class="text-purple-500">Ctrl+Shift+T</div>
-        </div>
-        <!-- <div class="my-2 p-1 flex border border-gray-200 bg-white rounded">
+              
+        <div class="my-2 p-1 flex border border-gray-200 bg-white rounded">
           <div class="w-full flex flex-col gap-2 p-2">
             <input
               type="text"
@@ -1614,7 +1549,104 @@
               </svg>
             </button>
           </div>
-        </div> -->
+        </div>
+        <div
+          class="flex justify-between items-center hover:bg-orange-100 text-orange-500 p-2 rounded-lg"
+        >
+          <div class="flex gap-3">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-5 h-5 m-auto"
+              viewBox="0 0 512 512"
+            >
+              <path
+                fill="none"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="32"
+                d="M256 112v288M400 256H112"
+              />
+            </svg>
+            <div class="m-auto">Add Attribute</div>
+          </div>
+          <div class="text-gray-500 dark:group-hover:text-slate-100"></div>
+        </div>
+      
+        <div class="my-2 p-1 flex border border-gray-200 bg-white rounded">
+          <div class="w-full flex flex-col gap-2 p-2">
+            <input
+              type="text"
+              placeholder="Select Attribute From Here"
+              class="m-auto p-2"
+              name=""
+              id=""
+            />
+            <input
+              type="text"
+              placeholder="Set Attribute Value"
+              class="m-auto p-2"
+              name=""
+              id=""
+            />
+          </div>
+          <div
+            class="text-gray-300 w-8 py-1 pl-2 pr-1 border-l flex items-center border-gray-200"
+          >
+            <button
+              class="cursor-pointer w-6 h-6 text-gray-600 outline-none focus:outline-none"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-5 h-5 m-auto"
+                viewBox="0 0 512 512"
+              >
+                <path
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="32"
+                  d="M368 368L144 144M368 144L144 368"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div
+        class="flex justify-between items-center hover:bg-purple-100 text-purple-500 p-2 rounded-lg"
+      >
+        <div class="flex gap-3">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-5 h-5 m-auto"
+            viewBox="0 0 512 512"
+          >
+            <rect
+              x="32"
+              y="48"
+              width="448"
+              height="416"
+              rx="48"
+              ry="48"
+              fill="none"
+              stroke="currentColor"
+              stroke-linejoin="round"
+              stroke-width="32"
+            ></rect>
+            <path
+              fill="none"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="32"
+              d="M96 112l80 64-80 64M192 240h64"
+            ></path>
+          </svg>
+          <div class="m-auto">Add to Html Templates</div>
+        </div>
+        <div class="text-purple-500">Ctrl+Shift+T</div>
+      </div>
         <hr class="my-2" />
         <div class="flex justify-between">
           <div
@@ -1667,7 +1699,7 @@
       </div>
        <!-- editor page page start -->
     </div>
-      <!-- alpine div start -->
+      <!-- tailBlast div start -->
 
   </body>
   <script>
