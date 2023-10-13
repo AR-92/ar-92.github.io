@@ -23,7 +23,9 @@
     </style>
   </head>
   <body x-data="view" x-bind:class="{ 'dark': darkMode, [bgColor]: true}">
+     <!-- model div -->
     <div class="fixed inset-0 flex items-center justify-center">
+      <!-- about page start -->
       <div
         x-show="openAbout"
         class="animate__animated animate__slideInRight bg-white dark:bg-slate-800 h-[calc(100vh-50px)] w-[calc(100%-50px)] rounded-lg relative z-10 border"
@@ -46,6 +48,8 @@
           </svg>
         </div>
       </div>
+        <!-- about page end -->
+         <!-- help page start -->
       <div
         x-show="openHelp"
         class="animate__animated animate__zoomIn bg-white dark:bg-slate-800 h-[500px] w-1/2 rounded-lg relative z-10 border"
@@ -68,7 +72,11 @@
           </svg>
         </div>
       </div>
+      <!-- help page end -->
     </div>
+     <!-- model div -->
+
+     <!-- alpine div start -->
     <div
       x-on:mousedown="isDragging = true, xOffset = $event.clientX - left, yOffset = $event.clientY - top"
       x-on:mousemove="if (isDragging) { top = $event.clientY - yOffset, left = $event.clientX - xOffset }"
@@ -76,6 +84,7 @@
       x-on:mouseleave="isDragging = false"
       x-bind:style="`top: ${top}px; left: ${left}px; position: absolute; cursor: move; user-select: none;`"
     >
+    <!-- Start page -->
       <div
         @click="openMainMenu = true;MainMenu = false"
         x-show="MainMenu"
@@ -124,6 +133,8 @@
           </div>
         </div>
       </div>
+      <!-- Start page end -->
+      <!-- main page start -->
       <div
         x-show="openMainMenu"
         class="animate__animated animate__fadeInDownBig h-fit w-[270px] bg-white dark:bg-slate-800 dark:text-slate-100 rounded-lg flex flex-col gap-1 p-2 text-xs border dark:border-slate-700"
@@ -547,6 +558,8 @@
           </div>
         </div>
       </div>
+      <!-- main page end -->
+      <!-- project page start -->
       <div
         x-show="openProjectMenu"
         x-data="files"
@@ -857,6 +870,8 @@
           </div>
         </div>
       </div>
+      <!-- project page end -->
+      <!-- file page start -->
       <div
         x-show="openFolderMenu"
         x-data="files"
@@ -1153,6 +1168,8 @@
           </div>
         </div>
       </div>
+      <!-- file page end -->
+      <!-- elements page start -->
       <div
         x-show="openElementMenu"
         class="animate__animated animate__fadeInDownBig h-fit w-[270px] bg-white dark:bg-slate-800 rounded-lg dark:text-slate-100 flex flex-col gap-1 p-2 text-xs border"
@@ -1305,6 +1322,8 @@
           </div>
         </div>
       </div>
+      <!-- elements page end -->
+      <!-- editor page page start -->
       <div
         x-show="openEditorMenu"
         class="animate__animated animate__fadeInDownBig h-fit w-[270px] bg-white dark:bg-slate-800 rounded-lg dark:text-slate-100 flex flex-col gap-1 p-2 text-xs border"
@@ -1646,7 +1665,10 @@
           </div>
         </div>
       </div>
+       <!-- editor page page start -->
     </div>
+      <!-- alpine div start -->
+
   </body>
   <script>
     function editFileById(files, id, newData) {
