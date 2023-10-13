@@ -1335,23 +1335,27 @@
           <div class="text-gray-500 dark:group-hover:text-slate-100 " >Ctrl+O</div>
         </div> -->
         <!-- <hr /> -->
-        <div class="my-2 p-1 flex border border-gray-200 bg-white rounded">
+        <div class="my-2 p-1 flex border border-gray-200 bg-white dark:bg-slate-700 rounded">
           <div class="w-full">
             <input
               type="text"
               placeholder="Select Tag From Here"
-              class="m-auto p-2"
+              class="m-auto p-2 "
               name=""
               id=""
             />
           </div>
           <div
+            x-data="{ isAnimating: false }"
+            @mouseenter="isAnimating = true"
+             @animationend="isAnimating = false"
             class="text-gray-300 w-8 py-1 pl-2 pr-1 border-l flex items-center border-gray-200"
           >
             <button
-              class="cursor-pointer w-6 h-6 text-gray-600 outline-none focus:outline-none"
+              class="cursor-pointer w-6 h-6 hover:text-orange-500 text-gray-600 outline-none focus:outline-none"
             >
               <svg
+               :class="{'animate__fadeInUp': isAnimating}" 
                 xmlns="http://www.w3.org/2000/svg"
                 width="100%"
                 height="100%"
@@ -1361,7 +1365,7 @@
                 stroke-width="2"
                 stroke-linecap="round"
                 stroke-linejoin="round"
-                class="feather feather-chevron-up w-4 h-4"
+                class="feather feather-chevron-up w-4 h-4 animate__animated"
               >
                 <polyline points="18 15 12 9 6 15"></polyline>
               </svg>
@@ -1379,12 +1383,16 @@
             />
           </div>
           <div
+            x-data="{ isAnimating: false }"
+            @mouseenter="isAnimating = true"
+            @animationend="isAnimating = false"
             class="text-gray-300 w-8 py-1 pl-2 pr-1 border-l flex items-center border-gray-200"
           >
             <button
-              class="cursor-pointer w-6 h-6 text-gray-600 outline-none focus:outline-none"
+              class="cursor-pointer w-6 h-6 hover:text-orange-500 text-gray-600 outline-none focus:outline-none"
             >
               <svg
+              :class="{'animate__fadeInUp': isAnimating}"
                 xmlns="http://www.w3.org/2000/svg"
                 width="100%"
                 height="100%"
@@ -1394,7 +1402,7 @@
                 stroke-width="2"
                 stroke-linecap="round"
                 stroke-linejoin="round"
-                class="feather feather-chevron-up w-4 h-4"
+                class="feather feather-chevron-up w-4 h-4 animate__animated"
               >
                 <polyline points="18 15 12 9 6 15"></polyline>
               </svg>
@@ -1403,7 +1411,10 @@
         </div>
         <div class="flex flex-auto flex-wrap">
           <div
-            class="flex justify-center items-center m-1 font-medium py-1 px-2 bg-white rounded-full text-teal-700 bg-teal-100 border border-teal-300"
+           x-data="{ isAnimating: false }"
+            @mouseenter="isAnimating = true"
+            @animationend="isAnimating = false"
+            class="flex justify-center hover:text-red-500 m-1 font-medium py-1 px-2 bg-white rounded-full text-teal-700 bg-teal-100 border border-teal-300"
           >
             <div
               class="text-xs font-normal leading-none max-w-full flex-initial"
@@ -1413,6 +1424,7 @@
             <div class="flex flex-auto flex-row-reverse">
               <div>
                 <svg
+                :class="{'animate__rotateIn': isAnimating}"
                   xmlns="http://www.w3.org/2000/svg"
                   width="100%"
                   height="100%"
@@ -1422,7 +1434,7 @@
                   stroke-width="2"
                   stroke-linecap="round"
                   stroke-linejoin="round"
-                  class="feather feather-x cursor-pointer hover:text-teal-400 rounded-full w-4 h-4 ml-2"
+                  class="feather feather-x cursor-pointer rounded-full w-4 h-4 ml-2 animate__animated"
                 >
                   <line x1="18" y1="6" x2="6" y2="18"></line>
                   <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -1431,7 +1443,10 @@
             </div>
           </div>
           <div
-            class="flex justify-center items-center m-1 font-medium py-1 px-2 bg-white rounded-full text-teal-700 bg-teal-100 border border-teal-300"
+            x-data="{ isAnimating: false }"
+            @mouseenter="isAnimating = true"
+            @animationend="isAnimating = false"
+            class="flex justify-center items-center hover:text-red-500 m-1 font-medium py-1 px-2 bg-white rounded-full text-teal-700 bg-teal-100 border border-teal-300"
           >
             <div
               class="text-xs font-normal leading-none max-w-full flex-initial"
@@ -1441,6 +1456,7 @@
             <div class="flex flex-auto flex-row-reverse">
               <div>
                 <svg
+                 :class="{'animate__rotateIn': isAnimating}"
                   xmlns="http://www.w3.org/2000/svg"
                   width="100%"
                   height="100%"
@@ -1450,7 +1466,7 @@
                   stroke-width="2"
                   stroke-linecap="round"
                   stroke-linejoin="round"
-                  class="feather feather-x cursor-pointer hover:text-teal-400 rounded-full w-4 h-4 ml-2"
+                  class="feather feather-x cursor-pointer hover:text-teal-400 rounded-full w-4 h-4 ml-2 animate__animated"
                 >
                   <line x1="18" y1="6" x2="6" y2="18"></line>
                   <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -1459,8 +1475,11 @@
             </div>
           </div>
           <div
-            class="flex justify-center items-center m-1 font-medium py-1 px-2 bg-white rounded-full text-teal-700 bg-teal-100 border border-teal-300"
-          >
+            x-data="{ isAnimating: false }"
+            @mouseenter="isAnimating = true"
+            @animationend="isAnimating = false"
+            class="flex justify-center items-center hover:text-red-500 m-1 font-medium py-1 px-2 bg-white rounded-full text-teal-700 bg-teal-100 border border-teal-300"
+            >
             <div
               class="text-xs font-normal leading-none max-w-full flex-initial"
             >
@@ -1469,6 +1488,7 @@
             <div class="flex flex-auto flex-row-reverse">
               <div>
                 <svg
+                  :class="{'animate__rotateIn': isAnimating}" 
                   xmlns="http://www.w3.org/2000/svg"
                   width="100%"
                   height="100%"
@@ -1478,7 +1498,7 @@
                   stroke-width="2"
                   stroke-linecap="round"
                   stroke-linejoin="round"
-                  class="feather feather-x cursor-pointer hover:text-teal-400 rounded-full w-4 h-4 ml-2"
+                  class="feather feather-x cursor-pointer hover:text-teal-400 rounded-full w-4 h-4 ml-2 animate__animated"
                 >
                   <line x1="18" y1="6" x2="6" y2="18"></line>
                   <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -1489,11 +1509,15 @@
         </div>
         <div
           class="flex justify-between items-center hover:bg-green-100 text-green-500 p-2 rounded-lg"
+          x-data="{ isAnimating: false }"
+          @mouseenter="isAnimating = true"
+          @animationend="isAnimating = false"
         >
           <div class="flex gap-3">
             <svg
+             :class="{'animate__rotateIn': isAnimating}"
               xmlns="http://www.w3.org/2000/svg"
-              class="w-5 h-5 m-auto"
+              class="w-5 h-5 m-auto animate__animated "
               viewBox="0 0 512 512"
             >
               <path
@@ -1529,13 +1553,18 @@
           </div>
           <div
             class="text-gray-300 w-8 py-1 pl-2 pr-1 border-l flex items-center border-gray-200"
+            x-data="{ isAnimating: false }"
+            @mouseenter="isAnimating = true"
+            @animationend="isAnimating = false"
+
           >
             <button
-              class="cursor-pointer w-6 h-6 text-gray-600 outline-none focus:outline-none"
+              class="cursor-pointer hover:text-red-500 w-6 h-6 text-gray-600 outline-none focus:outline-none"
             >
               <svg
+               :class="{'animate__rotateIn': isAnimating}"
                 xmlns="http://www.w3.org/2000/svg"
-                class="w-5 h-5 m-auto"
+                class="w-5 h-5 m-auto animate__animated"
                 viewBox="0 0 512 512"
               >
                 <path
@@ -1552,11 +1581,15 @@
         </div>
         <div
           class="flex justify-between items-center hover:bg-orange-100 text-orange-500 p-2 rounded-lg"
+          x-data="{ isAnimating: false }"
+          @mouseenter="isAnimating = true"
+          @animationend="isAnimating = false"
         >
           <div class="flex gap-3">
             <svg
+             :class="{'animate__rotateIn': isAnimating}"
               xmlns="http://www.w3.org/2000/svg"
-              class="w-5 h-5 m-auto"
+              class="w-5 h-5 m-auto animate__animated"
               viewBox="0 0 512 512"
             >
               <path
@@ -1594,11 +1627,15 @@
             class="text-gray-300 w-8 py-1 pl-2 pr-1 border-l flex items-center border-gray-200"
           >
             <button
-              class="cursor-pointer w-6 h-6 text-gray-600 outline-none focus:outline-none"
+              class="cursor-pointer hover:text-red-500 w-6 h-6 text-gray-600 outline-none focus:outline-none"
+              x-data="{ isAnimating: false }"
+              @mouseenter="isAnimating = true"
+              @animationend="isAnimating = false"
             >
               <svg
+               :class="{'animate__rotateIn': isAnimating}"
                 xmlns="http://www.w3.org/2000/svg"
-                class="w-5 h-5 m-auto"
+                class="w-5 h-5 m-auto animate__animated"
                 viewBox="0 0 512 512"
               >
                 <path
@@ -1614,12 +1651,16 @@
           </div>
         </div>
         <div
-        class="flex justify-between items-center hover:bg-purple-100 text-purple-500 p-2 rounded-lg"
-      >
+          class="flex justify-between items-center hover:bg-purple-100 text-purple-500 p-2 rounded-lg"
+          x-data="{ isAnimating: false }"
+          @mouseenter="isAnimating = true"
+          @animationend="isAnimating = false"
+        >
         <div class="flex gap-3">
           <svg
+           :class="{'animate__rollIn': isAnimating}"
             xmlns="http://www.w3.org/2000/svg"
-            class="w-5 h-5 m-auto"
+            class="w-5 h-5 m-auto animate__animated"
             viewBox="0 0 512 512"
           >
             <rect
@@ -1646,17 +1687,21 @@
           <div class="m-auto">Add to Html Templates</div>
         </div>
         <div class="text-purple-500">Ctrl+Shift+T</div>
-      </div>
+        </div>
         <hr class="my-2" />
         <div class="flex justify-between">
           <div
+            x-data="{ isAnimating: false }"
+            @mouseenter="isAnimating = true"
+            @animationend="isAnimating = false"
             @click="openEditorMenu = false;openElementMenu=true;"
-            class="flex dark:hover:bg-blue-900 justify-between items-center hover:bg-gray-100 cursor-pointer p-2 rounded-lg w-full"
+            class="hover:text-blue-500 cursor-pointer p-2 rounded-lg w-full"
           >
-            <div class="flex gap-3">
+            <div class="flex gap-2">
               <svg
+                :class="{'animate__slideInRight': isAnimating}"
                 xmlns="http://www.w3.org/2000/svg"
-                class="w-5 h-5 m-auto"
+                class="w-5 h-5 animate__animated"
                 viewBox="0 0 512 512"
               >
                 <path
@@ -1668,18 +1713,21 @@
                   d="M328 112L184 256l144 144"
                 />
               </svg>
-              <div class="m-auto">Go Back</div>
+              <div class="self-center">Go Back</div>
             </div>
-            <div class="text-gray-500 dark:group-hover:text-slate-100"></div>
           </div>
           <div
+            x-data="{ isAnimating: false }"
+            @mouseenter="isAnimating = true"
+            @animationend="isAnimating = false"
             @click="openEditorMenu = false;MainMenu = true"
-            class="flex dark:hover:bg-blue-900 justify-between items-center hover:bg-gray-100 cursor-pointer p-2 rounded-lg w-full"
+            class="hover:text-red-500 cursor-pointer p-2 rounded-lg w-full"
           >
-            <div class="flex gap-3">
+            <div class="flex justify-end gap-2">
               <svg
+                :class="{'animate__rotateIn': isAnimating}"
                 xmlns="http://www.w3.org/2000/svg"
-                class="w-5 h-5 m-auto"
+                class="w-5 h-5 animate__animated"
                 viewBox="0 0 512 512"
               >
                 <path
@@ -1691,9 +1739,8 @@
                   d="M368 368L144 144M368 144L144 368"
                 />
               </svg>
-              <div class="m-auto">Close</div>
+              <div class="self-center">Close</div>
             </div>
-            <div class="text-gray-500 dark:group-hover:text-slate-100"></div>
           </div>
         </div>
       </div>
