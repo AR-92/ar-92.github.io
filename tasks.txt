@@ -1,0 +1,19 @@
+complete css animations
+complete array functions
+complete flow of the ui 
+complete undu and redo operations
+complete home and about page
+correct the coloring of the app
+full screen bug fixes
+add presistance database clientside
+add web presistance service worker clientside
+complete import code
+complete export code
+correct editor flow
+add settings page
+add renderer 
+make it as an extenssion
+give options to add color palette
+upload to github
+back as excap
+ 
