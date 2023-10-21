@@ -21,6 +21,8 @@
         --animate-delay: 0.9s;
       }
     </style>
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/persist@3.x.x/dist/cdn.min.js"></script>
+
   </head>
   <body
     x-cloak
@@ -1974,15 +1976,31 @@
 
       return updatedFiles;
     }
-    
-    function getSettings(){
-      var data= JSON.parse(localStorage.getItem('settings'));
-      if(!data){
-        return {};
-      } 
-      return data
+    function getSettings() {
+      var data = JSON.parse(localStorage.getItem("settings"));
+      if (!data) {
+        return {
+          MainMenu: true,
+          openMainMenu: false,
+          openProjectMenu: false,
+          openFolderMenu: false,
+          openElementMenu: false,
+          openEditorMenu: false,
+          openAbout: false,
+          isDragging: false,
+          openHelp: false,
+          bgColor: "bg-white",
+          fullScreenCon: false,
+          darkMode: false,
+          top: 10,
+          left: 10,
+          xOffset: 0,
+          yOffset: 0,
+        };
+      }
+      return data;
     }
-    var settings=getSettings();
+    var settings = getSettings();
 
     var projects = [
       {
@@ -2106,22 +2124,23 @@
         },
       }));
       Alpine.data("view", () => ({
-        MainMenu: true,
-        openMainMenu: false,
-        openProjectMenu: false,
-        openFolderMenu: false,
-        openElementMenu: false,
-        openEditorMenu: false,
-        darkMode: false,
-        fullScreenCon: false,
-        openAbout: false,
-        openHelp: false,
-        bgColor: "bg-white",
-        top: 10,
-        left: 10,
-        isDragging: false,
-        xOffset: 0,
-        yOffset: 0,
+        // ...settings,
+    MainMenu: true,
+          openMainMenu: false,
+          openProjectMenu: false,
+          openFolderMenu: false,
+          openElementMenu: false,
+          openEditorMenu: false,
+          openAbout: false,
+          isDragging: false,
+          openHelp: false,
+          bgColor: "bg-white",
+          fullScreenCon: false,
+          darkMode: false,
+          top: 10,
+          left: 10,
+          xOffset: 0,
+          yOffset: 0,
         fullscreen: function () {
           if (this.fullScreenCon) {
             document.webkitExitFullscreen();
@@ -2132,6 +2151,8 @@
           }
         },
       }));
+
     });
-  </script>
+ 
+ </script>
 </html>

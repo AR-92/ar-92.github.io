@@ -1,0 +1,7 @@
+:root {
+  --animate-duration: 500ms;
+  --animate-delay: 0.9s;
+}
+[x-cloak] {
+  display: none !important;
+}
