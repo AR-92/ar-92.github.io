@@ -10,15 +10,21 @@
     <link rel="stylesheet" href="./animate.css" />
     <link rel="stylesheet" href="./custom.css" />
   </head>
-
-  <body x-data="tailBlast" :class="bgColor">
+  <body x-data="tailBlast" :class="backgroundColor">
     <tailBlast
       x-cloak
-      :class="{'dark': darkMode,[bgColor]: true}"
+      :class="{'dark': darkMode,[backgroundColor]: true}"
       x-effect="change"
       x-init="getData"
     >
-      <mainCode x-html="mainCode"></mainCode>
+      <!-- <mainCode x-html="mainCode"></mainCode> -->
+      <iframe
+        :srcdoc="mainCode"
+        frameborder="0"
+        class="absolute h-screen w-screen"
+        id="pageContent"
+      ></iframe>
+
       <floatingDiv
         :style="`top: ${top}px; left: ${left}px; position: absolute;`"
       >
@@ -74,7 +80,10 @@
         </openBlast>
         <mainMenu
           x-show="mainMenu"
-          class="shadow-lg animate__animated animate__fadeInDownBig h-fit w-[270px] bg-white dark:bg-slate-800 dark:text-slate-100 flex flex-col gap-1 p-2 text-xs border dark:border-slate-700 rounded-lg"
+          @mousedown="startDragging"
+          @mousemove="dragging"
+          @mouseup="isDragging = false;"
+          class="shadow-lg animate__animated animate__fadeInDownBig h-fit w-[270px] bg-white dark:bg-slate-800 dark:text-slate-100 flex flex-col gap-1 p-2 text-xs border dark:border-slate-700 cursor-move rounded-lg"
         >
           <openProjects
             @click="openProjectMenu"
@@ -323,7 +332,7 @@
               @mouseenter="isAnimating = true"
               @animationend="isAnimating = false"
               @click="applyMode()"
-              class="flex group justify-between items-center cursor-pointer p-2 rounded-lg"
+              class="flex group justify-between items-center cursor-pointer p-2"
             >
               <item
                 class="flex gap-3"
@@ -445,7 +454,7 @@
               x-data="{ isAnimating: false }"
               @mouseenter="isAnimating = true"
               @animationend="isAnimating = false"
-              class="flex hover:text-yellow-500 cursor-pointer p-2 rounded-lg w-full"
+              class="flex hover:text-yellow-500 cursor-pointer p-2 w-full"
             >
               <item class="flex justify-start gap-3">
                 <svg
@@ -478,7 +487,7 @@
               @mouseenter="isAnimating = true"
               @animationend="isAnimating = false"
               @click="mainClose()"
-              class="hover:text-red-500 cursor-pointer p-2 rounded-lg w-full"
+              class="hover:text-red-500 cursor-pointer p-2 w-full"
             >
               <item class="flex justify-end gap-2">
                 <svg
@@ -503,16 +512,23 @@
         </mainMenu>
         <projectMenu
           x-show="projectMenu"
-          class="animate__animated animate__fadeInDownBig h-fit w-[270px] bg-white rounded-lg dark:bg-slate-800 dark:text-slate-100 flex flex-col gap-1 p-2 text-xs border dark:border-slate-700"
+          class="animate__animated animate__fadeInDownBig h-fit w-[270px] bg-white dark:bg-slate-800 dark:text-slate-100 flex flex-col gap-1 p-2 text-xs border dark:border-slate-700 rounded-lg"
         >
-          <header class="flex justify-between p-2">
+          <header
+            class="flex justify-between p-2 cursor-move"
+            x-show="!openInsertion;"
+            @mousedown="startDragging"
+            @mousemove="dragging"
+            @mouseup="isDragging = false;"
+          >
             <svg
+              @click="navBack"
               x-data="{ isAnimating: false }"
               @mouseenter="isAnimating = true"
               @animationend="isAnimating = false"
               :class="{'animate__slideInRight': isAnimating}"
               xmlns="http://www.w3.org/2000/svg"
-              class="w-5 h-5 animate__animated hover:text-blue-500"
+              class="w-5 h-5 animate__animated hover:text-blue-500 cursor-pointer"
               viewBox="0 0 512 512"
             >
               <path
@@ -524,8 +540,11 @@
                 d="M328 112L184 256l144 144"
               ></path>
             </svg>
-            <heading class="hover:text-blue-500">Main Projects Page</heading>
-            <dropdown class="flex group gap-2">
+            <heading
+              class="hover:text-blue-500 cursor-pointer"
+              x-text="currentItem.name"
+            ></heading>
+            <dropdown class="group">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 class="w-5 h-5 m-auto hover:text-yellow-500"
@@ -560,9 +579,11 @@
                 ></circle>
               </svg>
               <list
-                class="absolute -right-24 z-50 bg-white dark:bg-slate-800 border dark:border-slate-700 rounded-lg flex flex-col p-1 w-fit gap-2 group-hover:block hidden"
+                class="absolute -right-24 z-50 bg-white dark:bg-slate-800 border dark:border-slate-700 flex flex-col p-1 w-fit gap-2 group-hover:block hidden rounded-lg"
               >
                 <addElement
+                  x-show="currentItem.isFile || currentItem.isElement"
+                  @click="openInsertion=true;elementInput=true"
                   class="flex gap-3 hover:text-orange-500 p-2 cursor-pointer"
                   x-data="{ isAnimating: false }"
                   @mouseenter="isAnimating = true"
@@ -586,6 +607,8 @@
                   <div class="">Add Element</div>
                 </addElement>
                 <addFile
+                  x-show="currentItem.isFolder"
+                  @click="openInsertion=true;fileInput=true"
                   class="flex gap-3 hover:text-orange-500 p-2 cursor-pointer"
                   x-data="{ isAnimating: false }"
                   @mouseenter="isAnimating = true"
@@ -609,6 +632,7 @@
                   <div class="">Add Folder / File</div>
                 </addFile>
                 <search
+                  @click="openInsertion=true;searchInput=true"
                   class="flex gap-3 hover:text-blue-500 p-2 cursor-pointer"
                   x-data="{ isAnimating: false }"
                   @mouseenter="isAnimating = true"
@@ -636,7 +660,7 @@
                   x-data="{ isAnimating: false }"
                   @mouseenter="isAnimating = true"
                   @animationend="isAnimating = false"
-                  @click="pastInside()"
+                  @click="pastInItem(currentItem)"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -667,6 +691,7 @@
                   <div>Past Here</div>
                 </past>
                 <delete
+                  @click="deleteAll"
                   class="flex gap-3 hover:text-red-500 p-2 cursor-pointer"
                   x-data="{ isAnimating: false }"
                   @mouseenter="isAnimating = true"
@@ -703,13 +728,107 @@
                   </svg>
                   <div>Delete All</div>
                 </delete>
+                <downloadHTML
+                  x-show="currentItem.isFile || currentItem.isElement"
+                  @click="downloadHTML"
+                  class="flex gap-3 hover:text-orange-500 p-2 cursor-pointer"
+                  x-data="{ isAnimating: false }"
+                  @mouseenter="isAnimating = true"
+                  @animationend="isAnimating = false"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    :class="{'animate__rotateIn': isAnimating}"
+                    class="w-5 h-5 animate__animated"
+                    viewBox="0 0 512 512"
+                  >
+                    <path
+                      d="M336 176h40a40 40 0 0140 40v208a40 40 0 01-40 40H136a40 40 0 01-40-40V216a40 40 0 0140-40h40"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="32"
+                    />
+                    <path
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="32"
+                      d="M176 272l80 80 80-80M256 48v288"
+                    />
+                  </svg>
+                  <div class="">Download HTML</div>
+                </downloadHTML>
               </list>
             </dropdown>
           </header>
+          <insertInput
+            x-show="openInsertion"
+            class="flex justify-between items-center p-2 gap-1 w-full"
+          >
+            <svg
+              @click="closeInsertion"
+              x-data="{ isAnimating: false }"
+              @mouseenter="isAnimating = true"
+              @animationend="isAnimating = false"
+              :class="{'animate__rotateIn': isAnimating}"
+              xmlns="http://www.w3.org/2000/svg"
+              class="w-5 h-5 m-auto animate__animated hover:text-red-500 cursor-pointer"
+              viewBox="0 0 512 512"
+            >
+              <path
+                fill="none"
+                stroke="currentColor"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="32"
+                d="M368 368L144 144M368 144L144 368"
+              />
+            </svg>
+            <input
+              x-show="fileInput"
+              x-model="insert"
+              name="project"
+              @keydown.enter="getItemValue($el)"
+              class="h-8 p-2 w-full outline-none dark:bg-slate-700 bg-slate-100 rounded-lg"
+              type="text"
+              placeholder="Please Enter Project Name ..."
+            />
+            <input
+              x-show="searchInput"
+              x-model="insert"
+              name="search"
+              @keydown.enter="getItemValue($el)"
+              class="h-8 p-2 w-full outline-none dark:bg-slate-700 bg-slate-100 rounded-lg"
+              type="text"
+              placeholder="Search Here ..."
+            />
+            <input
+              x-show="elementInput"
+              x-model="insert"
+              name="element"
+              @keydown.enter="getItemValue($el)"
+              class="h-8 p-2 w-full outline-none dark:bg-slate-700 bg-slate-100 rounded-lg"
+              type="text"
+              placeholder="Please Enter Element Name ..."
+            />
+            <input
+              x-show="editInput"
+              x-model="insert"
+              name="rename"
+              @keydown.enter="getItemValue($el)"
+              class="h-8 p-2 w-full outline-none dark:bg-slate-700 bg-slate-100 rounded-lg"
+              type="text"
+              placeholder="Please Rename Here ..."
+            />
+          </insertInput>
           <itemsContainer
-            class="border-t border-b py-2 border-slate-100 dark:border-slate-700"
+            class="border-t border-b py-4 border-slate-100 dark:border-slate-700 flex flex-col max-h-[300px] overflow-y-auto"
           >
             <empty
+              x-show="currentItem.children.length < 1"
               class="my-10 hover:text-orange-500 gap-6 flex flex-col"
               x-data="{ isAnimating: false }"
               @mouseenter="isAnimating = true"
@@ -759,9 +878,291 @@
                 />
               </svg>
               <text class="flex p-2 cursor-pointer m-auto">
-                Empty, Add from here !
+                Empty, Add from the menu up !
               </text>
             </empty>
+            <template
+              x-show="currentItem.children.length > 0"
+              x-for="(f, index) in currentItem.children"
+            >
+              <item
+                draggable="true"
+                @dragstart="dragIndex = index"
+                @dragover="dragover(index)"
+                @dragend="dragIndex = null"
+                :class="{ 'border border-green-500 text-green-500': dragIndex === index }"
+                class="flex relative justify-between cursor-pointer p-2 rounded-lg"
+              >
+                <intro class="flex gap-3 hover:text-green-500">
+                  <svg
+                    x-show="f.isFolder===true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-5 h-5 m-auto"
+                    viewBox="0 0 512 512"
+                  >
+                    <path
+                      d="M440 432H72a40 40 0 01-40-40V120a40 40 0 0140-40h75.89a40 40 0 0122.19 6.72l27.84 18.56a40 40 0 0022.19 6.72H440a40 40 0 0140 40v240a40 40 0 01-40 40zM32 192h448"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="32"
+                    />
+                  </svg>
+                  <svg
+                    x-show="f.isFile===true"
+                    x-bind:class="{ 'text-green-500': dragging === index }"
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-5 h-5 m-auto hover:text-green-500"
+                    viewBox="0 0 512 512"
+                  >
+                    <path
+                      d="M416 221.25V416a48 48 0 01-48 48H144a48 48 0 01-48-48V96a48 48 0 0148-48h98.75a32 32 0 0122.62 9.37l141.26 141.26a32 32 0 019.37 22.62z"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-linejoin="round"
+                      stroke-width="32"
+                    />
+                    <path
+                      d="M256 56v120a32 32 0 0032 32h120"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="32"
+                    />
+                  </svg>
+                  <svg
+                    x-show="f.isElement===true"
+                    x-bind:class="{ 'text-green-500': dragging === index }"
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-5 h-5 m-auto hover:text-green-500"
+                    viewBox="0 0 512 512"
+                  >
+                    <path
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="32"
+                      d="M160 368L32 256l128-112M352 368l128-112-128-112M304 96l-96 320"
+                    />
+                  </svg>
+                  <name
+                    class="m-auto"
+                    @click="currentlySelected(f)"
+                    x-text="f.name"
+                  ></name>
+                </intro>
+                <icons class="flex">
+                  <svg
+                    @click="navto(f)"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 512 512"
+                    class="w-5 hover:text-blue-500 animate__animated"
+                  >
+                    <path
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="48"
+                      d="M184 112l144 144-144 144"
+                    />
+                  </svg>
+                  <dropdown class="group">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="w-5 hover:text-yellow-500 animate__animated"
+                      viewBox="0 0 512 512"
+                    >
+                      <circle
+                        cx="256"
+                        cy="256"
+                        r="32"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-miterlimit="10"
+                        stroke-width="32"
+                      />
+                      <circle
+                        cx="256"
+                        cy="416"
+                        r="32"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-miterlimit="10"
+                        stroke-width="32"
+                      />
+                      <circle
+                        cx="256"
+                        cy="96"
+                        r="32"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-miterlimit="10"
+                        stroke-width="32"
+                      />
+                    </svg>
+                    <list
+                      class="fixed -right-24 z-50 bg-white dark:bg-slate-800 border dark:border-slate-700 flex flex-col p-1 w-fit gap-2 group-hover:block hidden rounded-lg"
+                    >
+                      <editItem
+                        x-show="!f.isElement"
+                        class="flex gap-3 hover:text-orange-500 p-2 cursor-pointer"
+                        @click="renameItem(f);"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          class="w-5 h-5 animate__animated"
+                          viewBox="0 0 512 512"
+                        >
+                          <path
+                            d="M384 224v184a40 40 0 01-40 40H104a40 40 0 01-40-40V168a40 40 0 0140-40h167.48"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="32"
+                          />
+                          <path
+                            fill="currentColor"
+                            stroke="currentColor"
+                            d="M459.94 53.25a16.06 16.06 0 00-23.22-.56L424.35 65a8 8 0 000 11.31l11.34 11.32a8 8 0 0011.34 0l12.06-12c6.1-6.09 6.67-16.01.85-22.38zM399.34 90L218.82 270.2a9 9 0 00-2.31 3.93L208.16 299a3.91 3.91 0 004.86 4.86l24.85-8.35a9 9 0 003.93-2.31L422 112.66a9 9 0 000-12.66l-9.95-10a9 9 0 00-12.71 0z"
+                          />
+                        </svg>
+                        <name>Rename Item</name>
+                      </editItem>
+                      <editElement
+                        x-show="f.isElement"
+                        class="flex gap-3 hover:text-orange-500 p-2 cursor-pointer"
+                        @click="openEditor(f)"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          class="w-5 h-5 animate__animated"
+                          viewBox="0 0 512 512"
+                        >
+                          <path
+                            d="M384 224v184a40 40 0 01-40 40H104a40 40 0 01-40-40V168a40 40 0 0140-40h167.48"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="32"
+                          />
+                          <path
+                            fill="currentColor"
+                            stroke="currentColor"
+                            d="M459.94 53.25a16.06 16.06 0 00-23.22-.56L424.35 65a8 8 0 000 11.31l11.34 11.32a8 8 0 0011.34 0l12.06-12c6.1-6.09 6.67-16.01.85-22.38zM399.34 90L218.82 270.2a9 9 0 00-2.31 3.93L208.16 299a3.91 3.91 0 004.86 4.86l24.85-8.35a9 9 0 003.93-2.31L422 112.66a9 9 0 000-12.66l-9.95-10a9 9 0 00-12.71 0z"
+                          />
+                        </svg>
+                        <name>Edit Element</name>
+                      </editElement>
+                      <copyItem
+                        class="flex gap-3 hover:text-blue-500 p-2 cursor-pointer"
+                        @click="copyItem(f)"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          class="w-5 h-5 animate__animated"
+                          viewBox="0 0 512 512"
+                        >
+                          <rect
+                            x="128"
+                            y="128"
+                            width="336"
+                            height="336"
+                            rx="57"
+                            ry="57"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-linejoin="round"
+                            stroke-width="32"
+                          />
+                          <path
+                            d="M383.5 128l.5-24a56.16 56.16 0 00-56-56H112a64.19 64.19 0 00-64 64v216a56.16 56.16 0 0056 56h24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="32"
+                          />
+                        </svg>
+                        <name>Copy this item</name>
+                      </copyItem>
+                      <pastItem
+                        class="flex gap-3 hover:text-green-500 p-2 cursor-pointer"
+                        @click="pastInItem(f)"
+                        x-show="f.isFolder"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          class="w-5 h-5 animate__animated"
+                          viewBox="0 0 512 512"
+                        >
+                          <path
+                            d="M336 64h32a48 48 0 0148 48v320a48 48 0 01-48 48H144a48 48 0 01-48-48V112a48 48 0 0148-48h32"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-linejoin="round"
+                            stroke-width="32"
+                          />
+                          <rect
+                            x="176"
+                            y="32"
+                            width="160"
+                            height="64"
+                            rx="26.13"
+                            ry="26.13"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-linejoin="round"
+                            stroke-width="32"
+                          />
+                        </svg>
+                        <name>Past init</name>
+                      </pastItem>
+                      <deleteItem
+                        class="flex gap-3 hover:text-red-500 p-2 cursor-pointer"
+                        @click="deleteItem(index)"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          class="w-5 h-5 animate__animated"
+                          viewBox="0 0 512 512"
+                        >
+                          <path
+                            d="M112 112l20 320c.95 18.49 14.4 32 32 32h184c17.67 0 30.87-13.51 32-32l20-320"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="32"
+                          />
+                          <path
+                            stroke="currentColor"
+                            stroke-linecap="round"
+                            stroke-miterlimit="10"
+                            stroke-width="32"
+                            d="M80 112h352"
+                          />
+                          <path
+                            d="M192 112V72h0a23.93 23.93 0 0124-24h80a23.93 23.93 0 0124 24h0v40M256 176v224M184 176l8 224M328 176l-8 224"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="32"
+                          />
+                        </svg>
+                        <name>Delete this item</name>
+                      </deleteItem>
+                    </list>
+                  </dropdown>
+                </icons>
+              </item>
+            </template>
           </itemsContainer>
           <footer class="flex justify-between">
             <reviews
@@ -769,7 +1170,7 @@
               x-data="{ isAnimating: false }"
               @mouseenter="isAnimating = true"
               @animationend="isAnimating = false"
-              class="hover:text-blue-500 cursor-pointer p-2 rounded-lg w-full"
+              class="hover:text-blue-500 cursor-pointer p-2 w-full"
             >
               <item class="flex justify-start gap-3">
                 <svg
@@ -795,7 +1196,7 @@
               @mouseenter="isAnimating = true"
               @animationend="isAnimating = false"
               @click="projectClose()"
-              class="hover:text-red-500 cursor-pointer p-2 rounded-lg w-full"
+              class="hover:text-red-500 cursor-pointer p-2 w-full"
             >
               <item class="flex justify-end gap-2">
                 <svg
@@ -818,6 +1219,223 @@
             </close>
           </footer>
         </projectMenu>
+        <Editor
+          x-show="editor"
+          class="animate__animated animate__fadeInDownBig h-fit w-[270px] bg-white dark:bg-slate-800 dark:text-slate-100 flex flex-col gap-1 p-2 text-xs border dark:border-slate-700 rounded-lg"
+        >
+          <header
+            class="flex justify-center border-slate-100 border-b dark:border-slate-700 mb-1 p-2 cursor-move"
+            @mousedown="startDragging"
+            @mousemove="dragging"
+            @mouseup="isDragging = false;"
+          >
+            <header class="m-auto">tailBlast Editor</header>
+          </header>
+          <header class="my-2">General</header>
+
+          <input
+            x-model="element.name"
+            class="p-2 h-8 w-full outline-none dark:bg-slate-700 bg-slate-100 rounded-lg"
+            placeholder="Please Enter Your Element Name Here ..."
+            type="text"
+          />
+          <input
+            @keyup.enter="addClass($el)"
+            class="p-2 h-8 w-full outline-none dark:bg-slate-700 bg-slate-100 rounded-lg"
+            placeholder="Please Enter Your Classes Here ..."
+            type="text"
+          />
+
+          <div class="flex flex-auto flex-wrap">
+            <template x-for="(c, index) in element.classes">
+              <div
+                x-data="{ isAnimating: false }"
+                @mouseenter="isAnimating = true"
+                @animationend="isAnimating = false"
+                class="flex cursor-pointer justify-center items-center hover:text-red-500 hover:bg-red-100 m-1 font-medium py-1 px-2 bg-white rounded-md text-green-700 bg-green-100 dark:bg-slate-800 border border-green-300 hover:border-red-500"
+              >
+                <div
+                  x-text="c"
+                  class="text-xs font-normal leading-none max-w-full flex-initial"
+                ></div>
+                <div class="flex flex-auto flex-row-reverse">
+                  <div>
+                    <svg
+                      @click="removeClass(index)"
+                      :class="{'animate__rotateIn': isAnimating}"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="100%"
+                      height="100%"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="cursor-pointer hover:text-red-400 rounded-full w-4 h-4 ml-2 animate__animated"
+                    >
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </template>
+          </div>
+          <header class="my-2">Inner Content</header>
+
+          <div class="flex gap-2">
+            <textarea
+              x-model="element.content"
+              placeholder="Please Enter Your Content Here ..."
+              class="p-2 w-full outline-none dark:bg-slate-700 bg-slate-100 rounded-lg"
+              cols="30"
+              rows="1"
+            ></textarea>
+          </div>
+          <header class="my-2">Attribute</header>
+
+          <div class="flex gap-2">
+            <div class="flex flex-col gap-2">
+              <input
+                x-model="attNameRef"
+                class="p-2 h-8 w-full outline-none dark:bg-slate-700 bg-slate-100 rounded-lg"
+                placeholder="Please Enter Your Attribute Here ..."
+                type="text"
+              />
+              <textarea
+                x-model="attValueRef"
+                placeholder="Please Enter Your Property Here ..."
+                class="p-2 w-full outline-none dark:bg-slate-700 bg-slate-100 rounded-lg"
+                cols="30"
+                rows="1"
+              ></textarea>
+            </div>
+          </div>
+          <div
+            @click="addAttribute($refs.name,$refs.value)"
+            class="flex justify-between items-center hover:text-green-500 p-2 cursor-pointer"
+            x-data="{ isAnimating: false }"
+            @mouseenter="isAnimating = true"
+            @animationend="isAnimating = false"
+          >
+            <div class="flex gap-3">
+              <svg
+                :class="{'animate__rotateIn': isAnimating}"
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-5 h-5 m-auto animate__animated"
+                viewBox="0 0 512 512"
+              >
+                <path
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="32"
+                  d="M256 112v288M400 256H112"
+                />
+              </svg>
+              <div class="m-auto">Add Attribute</div>
+            </div>
+            <div class="text-gray-500 dark:group-hover:text-slate-100"></div>
+          </div>
+          <div class="flex flex-auto flex-wrap">
+            <template x-for="(a, index) in element.attributes">
+              <div
+                x-data="{ isAnimating: false }"
+                @mouseenter="isAnimating = true"
+                @animationend="isAnimating = false"
+                class="flex cursor-pointer justify-center items-center hover:text-red-500 hover:bg-red-100 m-1 font-medium py-1 px-2 bg-white rounded-md text-green-700 bg-green-100 dark:bg-slate-800 border border-green-300 hover:border-red-500"
+              >
+                <div
+                  x-text="a.name"
+                  class="text-xs font-normal leading-none max-w-full flex-initial"
+                ></div>
+                <div class="mx-1">:</div>
+
+                <div
+                  x-text="a.value"
+                  class="text-xs font-normal w-4 truncate text-clip"
+                ></div>
+                <div class="flex flex-auto flex-row-reverse">
+                  <div>
+                    <svg
+                      @click="removeAttribute(index)"
+                      :class="{'animate__rotateIn': isAnimating}"
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="100%"
+                      height="100%"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="cursor-pointer hover:text-red-400 rounded-full w-4 h-4 ml-2 animate__animated"
+                    >
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </template>
+          </div>
+          <footer class="flex justify-between">
+            <back
+              @click="backProject()"
+              x-data="{ isAnimating: false }"
+              @mouseenter="isAnimating = true"
+              @animationend="isAnimating = false"
+              class="hover:text-blue-500 cursor-pointer p-2 w-full"
+            >
+              <item class="flex justify-start gap-3">
+                <svg
+                  :class="{'animate__slideInRight': isAnimating}"
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="w-5 h-5 animate__animated"
+                  viewBox="0 0 512 512"
+                >
+                  <path
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="48"
+                    d="M328 112L184 256l144 144"
+                  />
+                </svg>
+                <name class="self-center">Go Back</name>
+              </item>
+            </back>
+            <close
+              x-data="{ isAnimating: false }"
+              @mouseenter="isAnimating = true"
+              @animationend="isAnimating = false"
+              @click="closeEditor()"
+              class="hover:text-red-500 cursor-pointer p-2 w-full"
+            >
+              <item class="flex justify-end gap-2">
+                <svg
+                  :class="{'animate__rotateIn': isAnimating}"
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="w-5 h-5 animate__animated"
+                  viewBox="0 0 512 512"
+                >
+                  <path
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="32"
+                    d="M368 368L144 144M368 144L144 368"
+                  />
+                </svg>
+                <name class="self-center">Close</name>
+              </item>
+            </close>
+          </footer>
+        </Editor>
       </floatingDiv>
       <notify
         x-show="notification.show"

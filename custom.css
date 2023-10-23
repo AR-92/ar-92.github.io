@@ -5,3 +5,27 @@
 [x-cloak] {
   display: none !important;
 }
+
+
+/* Scrollbar styles */
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: transparent rgb(203 213 225);
+}
+
+/* Chrome, Edge, and Safari */
+*::-webkit-scrollbar {
+  width: 4px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: rgb(203 213 225);
+
+  border-radius: 20px;
+}
