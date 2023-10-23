@@ -722,23 +722,32 @@ document.addEventListener("alpine:init", () => {
             handleFileInput() {
                 console.log('handleFileInput')
                 const fileInput = this.$refs.jsonFileInput;
-        
+
                 if (fileInput.files.length > 0) {
-                  const file = fileInput.files[0];
-                  const reader = new FileReader();
-        
-                  reader.onload = (event) => {
-                    try {
-                    console.log("on uplad >> ",this.root,JSON.parse(event.target.result))
-                      this.root = JSON.parse(event.target.result);
-                    } catch (error) {
-                      console.error('Error parsing JSON:', error);
-                    }
-                  };
-        
-                  reader.readAsText(file);
+                    const file = fileInput.files[0];
+                    const reader = new FileReader();
+
+                    reader.onload = (event) => {
+                        try {
+                            console.log("on uplad >> ", this.root, JSON.parse(event.target.result))
+                            this.root = JSON.parse(event.target.result);
+                        } catch (error) {
+                            console.error('Error parsing JSON:', error);
+                        }
+                    };
+
+                    reader.readAsText(file);
                 }
-              },
+            },
+            preview() {
+                const myIframe = document.getElementById('pageContent');
+                // Get the content from srcdoc attribute
+                const iframeSrcdocContent = myIframe.getAttribute('srcdoc');
+                // Open the content in a new tab
+                const newTab = window.open();
+                newTab.document.write(iframeSrcdocContent);
+                newTab.document.close();
+            }
         };
     });
 });
