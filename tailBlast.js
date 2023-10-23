@@ -543,10 +543,7 @@ document.addEventListener("alpine:init", () => {
                 return elementString;
             },
             render(elements) {
-                let htmlString = `<script src="./tw.js"></script>
-                <script src="./tailwindConfig.js"></script>
-                <link rel="stylesheet" href="./animate.css" />
-                <link rel="stylesheet" href="./custom.css" />`;
+                let htmlString = `<script src="./tw.js"></script>`;
                 if (this.currentItem.isFile) {
                     this.renderCode = this.currentItem.children;
                 }
@@ -628,7 +625,8 @@ document.addEventListener("alpine:init", () => {
             downloadHTML() {
                 const iframe = document.getElementById("pageContent");
                 const iframeDocument = iframe.contentDocument;
-                const iframeContent = iframeDocument.documentElement.outerHTML;
+                var iframeContent = iframeDocument.documentElement.outerHTML;
+                iframeContent = iframeContent.replace(/ id="[^"]*"/g, '');
 
                 // Create a Blob with the iframe content
                 const blob = new Blob([iframeContent], { type: "text/html" });
