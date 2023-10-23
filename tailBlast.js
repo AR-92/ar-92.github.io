@@ -132,7 +132,54 @@ function moveArrayItem(array, fromIndex, toIndex) {
     const item = array.splice(fromIndex, 1)[0];
     array.splice(toIndex, 0, item);
 }
+function getDate() {
+    // Get the current date
+    const currentDate = new Date();
 
+    // Create an array of month names
+    const monthNames = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+    ];
+
+    // Get the month, day, year, hour, minute, and second components
+    const month = monthNames[currentDate.getMonth()];
+    const day = currentDate.getDate();
+    const year = currentDate.getFullYear();
+    const hour = currentDate.getHours();
+    const minute = currentDate.getMinutes();
+    const second = currentDate.getSeconds();
+
+    // Function to add 'st', 'nd', 'rd', or 'th' to the day
+    function getDayWithOrdinal(day) {
+        if (day >= 11 && day <= 13) {
+            return day + 'th';
+        }
+        switch (day % 10) {
+            case 1:
+                return day + 'st';
+            case 2:
+                return day + 'nd';
+            case 3:
+                return day + 'rd';
+            default:
+                return day + 'th';
+        }
+    }
+
+    // Function to format the time as AM/PM
+    function formatAMPM(hours) {
+        const ampm = hours >= 12 ? 'pm' : 'am';
+        const formattedHours = hours % 12 || 12;
+        return `${formattedHours}:${String(minute).padStart(2, '0')}:${String(second).padStart(2, '0')}-${ampm}`;
+    }
+
+    // Create the formatted date and time string
+    const formattedDate = `${month}-${getDayWithOrdinal(day)}-${year}-${formatAMPM(hour)}`;
+
+    console.log(formattedDate); // Output: "October-23rd-2023-7:47:35-pm"
+    return formattedDate
+}
 document.addEventListener("alpine:init", () => {
     Alpine.data("tailBlast", () => {
         return {
@@ -275,8 +322,7 @@ document.addEventListener("alpine:init", () => {
             },
             change() {
                 console.log(this.mainCode)
-
-                this.render(this.currentItem.children);
+                this.render();
                 localStorage.setItem('root', JSON.stringify(this.root));
                 document.addEventListener("keydown", (event) => {
                     if (event.ctrlKey && event.key === "z") {
@@ -502,7 +548,7 @@ document.addEventListener("alpine:init", () => {
                 this.editor = true;
                 this.element = f;
                 if (this.currentItem.isFile !== undefined) {
-                    this.render(this.currentItem.children);
+                    this.render();
                 };
                 console.log("this element", this.element, f)
             },
@@ -542,8 +588,11 @@ document.addEventListener("alpine:init", () => {
 
                 return elementString;
             },
-            render(elements) {
-                let htmlString = `<script src="./tw.js"></script>`;
+            render() {
+                let htmlString = `<script src="./tw.js"></script>
+                <script src="./tailwindConfig.js"></script>
+                <link rel="stylesheet" href="./animate.css" />
+                <link rel="stylesheet" href="./custom.css" />`;
                 if (this.currentItem.isFile) {
                     this.renderCode = this.currentItem.children;
                 }
@@ -645,7 +694,51 @@ document.addEventListener("alpine:init", () => {
                 document.body.removeChild(a);
                 URL.revokeObjectURL(a.href);
 
-            }
+            },
+            downloadBackup() {
+                // Convert the object to a JSON string
+                const jsonString = JSON.stringify(this.root);
+
+                // Create a Blob from the JSON string
+                const blob = new Blob([jsonString], { type: "application/json" });
+
+                // Create a URL for the Blob
+                const url = URL.createObjectURL(blob);
+
+                // Create an anchor element for the download
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = getDate() + "-tailBlast-Backup.json"; // specify the filename for the downloaded file
+
+                // Simulate a click event on the anchor to trigger the download
+                a.click();
+
+                // Clean up by revoking the URL
+                URL.revokeObjectURL(url);
+            },
+            uploadBackup() {
+                this.$refs.jsonFileInput.click();
+            },
+            handleFileInput() {
+                console.log('handleFileInput')
+                const fileInput = this.$refs.jsonFileInput;
+        
+                if (fileInput.files.length > 0) {
+                  const file = fileInput.files[0];
+                  const reader = new FileReader();
+        
+                  reader.onload = (event) => {
+                    try {
+                    console.log("on uplad >> ",this.root,JSON.parse(event.target.result))
+                      this.root = JSON.parse(event.target.result);
+                    } catch (error) {
+                      console.error('Error parsing JSON:', error);
+                    }
+                  };
+        
+                  reader.readAsText(file);
+                }
+              },
         };
     });
 });

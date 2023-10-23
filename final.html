@@ -17,7 +17,6 @@
       x-effect="change"
       x-init="getData"
     >
-      <!-- <mainCode x-html="mainCode"></mainCode> -->
       <iframe
         :srcdoc="mainCode"
         frameborder="0"
@@ -247,6 +246,83 @@
               >?</shortCut
             >
           </help>
+          <backup class="border-t py-2 border-slate-100 dark:border-slate-700">
+            <downloadBackup
+              @click="downloadBackup()"
+              x-data="{ isAnimating: true }"
+              @mouseenter="isAnimating = true"
+              @animationend="isAnimating = false"
+              class="flex justify-between items-center hover:text-purple-500 cursor-pointer p-2"
+            >
+              <item class="flex gap-3">
+                <svg
+                  :class="{'animate__slideInLeft': isAnimating}"
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="w-5 h-5 m-auto animate__animated"
+                  viewBox="0 0 512 512"
+                >
+                  <path
+                    xmlns="http://www.w3.org/2000/svg"
+                    d="M320 336h76c55 0 100-21.21 100-75.6s-53-73.47-96-75.6C391.11 99.74 329 48 256 48c-69 0-113.44 45.79-128 91.2-60 5.7-112 35.88-112 98.4S70 336 136 336h56M192 400.1l64 63.9 64-63.9M256 224v224.03"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="32"
+                  />
+                </svg>
+                <name class="m-auto">Download Backup</name>
+              </item>
+              <shortCut
+                class="text-gray-500 group-hover:text-green-500"
+              ></shortCut>
+            </downloadBackup>
+            <uploadBackup
+              @click="uploadBackup()"
+              x-data="{ isAnimating: true }"
+              @mouseenter="isAnimating = true"
+              @animationend="isAnimating = false"
+              class="flex justify-between items-center hover:text-purple-500 cursor-pointer p-2"
+            >
+              <input
+                type="file"
+                id="jsonFileInput"
+                x-ref="jsonFileInput"
+                style="display: none"
+                x-on:change="handleFileInput"
+              />
+
+              <item class="flex gap-3">
+                <svg
+                  :class="{'animate__slideInLeft': isAnimating}"
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="w-5 h-5 m-auto animate__animated"
+                  viewBox="0 0 512 512"
+                >
+                  <path
+                    d="M320 367.79h76c55 0 100-29.21 100-83.6s-53-81.47-96-83.6c-8.89-85.06-71-136.8-144-136.8-69 0-113.44 45.79-128 91.2-60 5.7-112 43.88-112 106.4s54 106.4 120 106.4h56"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="32"
+                  />
+                  <path
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="32"
+                    d="M320 255.79l-64-64-64 64M256 448.21V207.79"
+                  />
+                </svg>
+                <name class="m-auto">Upload Backup</name>
+              </item>
+              <shortCut
+                class="text-gray-500 group-hover:text-green-500"
+              ></shortCut>
+            </uploadBackup>
+          </backup>
           <settings
             class="border-t border-b py-2 border-slate-100 dark:border-slate-700"
           >
