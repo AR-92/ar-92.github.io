@@ -180,6 +180,7 @@ function getDate() {
     console.log(formattedDate); // Output: "October-23rd-2023-7:47:35-pm"
     return formattedDate
 }
+
 document.addEventListener("alpine:init", () => {
     Alpine.data("tailBlast", () => {
         return {
@@ -321,7 +322,8 @@ document.addEventListener("alpine:init", () => {
                 }
             },
             change() {
-                console.log(this.mainCode)
+                // console.log(this.mainCode)
+
                 this.render();
                 localStorage.setItem('root', JSON.stringify(this.root));
                 document.addEventListener("keydown", (event) => {
@@ -394,6 +396,18 @@ document.addEventListener("alpine:init", () => {
                 this.root = JSON.parse(localStorage.getItem('root')) ?? this.root;
                 this.currentItem = this.root;
                 this.getNavState();
+                // Listen for events from the iframe
+                window.addEventListener('message',  (event)=> {
+                    if (event.data.type === 'CustomEventFromIframe') {
+                        const eventData = event.data.data;
+                        // Handle the event data
+                        var o=findObjectById(this.root, eventData.id);
+                        this.openEditor(o)
+                        console.log('Received data from the iframe:', eventData.id);
+
+                    }
+                });
+
             },
             closeInsertion() {
                 this.searchInput = false;
@@ -590,9 +604,8 @@ document.addEventListener("alpine:init", () => {
             },
             render() {
                 let htmlString = `<script src="./tw.js"></script>
-                <script src="./tailwindConfig.js"></script>
-                <link rel="stylesheet" href="./animate.css" />
-                <link rel="stylesheet" href="./custom.css" />`;
+                                <script src="./hover.js" defer></script>
+                                <link rel="stylesheet" href="./custom.css" />`;
                 if (this.currentItem.isFile) {
                     this.renderCode = this.currentItem.children;
                 }

@@ -29,3 +29,11 @@
 
   border-radius: 20px;
 }
+
+
+
+.red-border-on-hover:hover {
+  border: 1px solid transparent;
+  transition: border-color 0.3s;
+  border-color: red;
+}
