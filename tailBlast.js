@@ -633,12 +633,23 @@ document.addEventListener("alpine:init", () => {
                     reader.readAsDataURL(file);
                 }
             },
-            pasteFromClip(){
-               pasteFromClipboard(this.currentItem.children);
-            //    this.currentItem.children.push(t)
+            pasteFromClip() {
+                pasteFromClipboard(this.currentItem.children);
+                //    this.currentItem.children.push(t)
             },
-            showClassesEle(f){
-               return f.classes.join(' ') 
+            showClassesEle(f) {
+                return f.classes.join(' ')
+            },
+            foucsElement(f) {
+                if (f.isElement) {
+                    console.log(f);
+                    const iframe = document.getElementById('pageContent');
+                    const message =  JSON.stringify(f);
+                    const targetOrigin = '*'; // Use the actual domain of the iframe for security.
+
+                    // Send a message to the iframe
+                    iframe.contentWindow.postMessage(message, targetOrigin);
+                }
             }
 
         };

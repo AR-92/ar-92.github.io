@@ -81,10 +81,37 @@ function hideElementInfo() {
 }
 
 // Attach event listeners to all elements on the page
-const elements = document.querySelectorAll('*');
+const elements = document.querySelectorAll('[id]');
 elements.forEach(element => {
     element.addEventListener('mouseover', showElementInfo);
     element.addEventListener('mouseout', hideElementInfo);
+});
+function highlightElementAndScroll(id) {
+    // Reset the border of all elements
+    const elements = document.querySelectorAll('[id]');
+    elements.forEach(element => {
+        // element.style.border = 'none';
+        element.removeAttribute('style');
+    });
+
+    // Set the border of the targeted element to '1px dashed red'
+    const targetElement = document.getElementById(id);
+    if (targetElement) {
+        targetElement.style.border = '1px dashed red';
+        targetElement.scrollIntoView({ behavior: 'smooth' }); // Scroll the element into view
+    } else {
+        console.log('Element not found with id ' + id);
+    }
+}
+// Listen for messages from the parent window
+window.addEventListener('message', event => {
+    // Do something with the received data
+    const receivedData = event.data;
+    var e=JSON.parse(receivedData);
+    console.log('Received data in the child window:', e);
+    highlightElementAndScroll(e.id)
+    // You can send a response back to the parent window if needed
+    // event.source.postMessage('Response from the child window!', event.origin);
 });
 
 
