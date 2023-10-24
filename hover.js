@@ -49,6 +49,19 @@ elementsWithIDs.forEach(element => {
     });
 });
 
+// Function to save the scroll position when the page unloads
+window.addEventListener('beforeunload', function () {
+    localStorage.setItem('scrollPosition', window.scrollY);
+  });
+  
+  // Function to restore the scroll position when the page loads
+  window.addEventListener('load', function () {
+    const scrollPosition = localStorage.getItem('scrollPosition');
+    if (scrollPosition) {
+      window.scrollTo(0, scrollPosition);
+    }
+  });
+
 
 
 
