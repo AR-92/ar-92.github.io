@@ -180,6 +180,17 @@ function getDate() {
     console.log(formattedDate); // Output: "October-23rd-2023-7:47:35-pm"
     return formattedDate
 }
+function generateRandomAlphanumericId(length) {
+    const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let id = "";
+
+    for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(Math.random() * charset.length);
+        id += charset.charAt(randomIndex);
+    }
+
+    return id;
+}
 function parseHtmlToJSObject(htmlContent) {
     const parser = new DOMParser();
     const doc = parser.parseFromString(htmlContent, "text/html");
@@ -187,18 +198,31 @@ function parseHtmlToJSObject(htmlContent) {
 
     function parseElement(element) {
         const obj = {
-            name: element.tagName,
+            id: generateRandomAlphanumericId(13),
+            name: element.tagName.toLowerCase(),
             children: [],
             classes: Array.from(element.classList),
-            attributes: [],
-            content: element.textContent.trim(),
+            attributes: Array.from(element.attributes).map(attribute => ({
+                name: attribute.name,
+                value: attribute.value
+            })),
+            content: "",
             isElement: true,
-            id: Date.now(),
         };
 
-        Array.from(element.attributes).forEach(attribute => {
-            obj.attributes.push({ name: attribute.name, value: attribute.value });
-        });
+        // Check if the element has an 'id' attribute and include it in the object
+        // if (element.hasAttribute('id')) {
+        //     obj.id = element.getAttribute('id');
+        // }
+
+        // If the element has child nodes, check and set the content property
+        if (element.hasChildNodes()) {
+            for (const child of element.childNodes) {
+                if (child.nodeType === Node.TEXT_NODE) {
+                    obj.content += child.textContent.trim();
+                }
+            }
+        }
 
         for (let child = element.firstElementChild; child; child = child.nextElementSibling) {
             obj.children.push(parseElement(child));
@@ -209,6 +233,9 @@ function parseHtmlToJSObject(htmlContent) {
 
     return parseElement(rootElement);
 }
+
+
+
 document.addEventListener("alpine:init", () => {
     Alpine.data("tailBlast", () => {
         return {
@@ -798,7 +825,7 @@ document.addEventListener("alpine:init", () => {
                 if (file) {
                     const reader = new FileReader();
 
-                    reader.onload =  (e)=> {
+                    reader.onload = (e) => {
                         const htmlContent = e.target.result;
                         const parsedObject = parseHtmlToJSObject(htmlContent);
                         const f = parsedObject
@@ -816,29 +843,29 @@ document.addEventListener("alpine:init", () => {
                     reader.readAsText(file);
                 }
             },
-            imageUpload64(){
+            imageUpload64() {
                 this.$refs.imageInput.click();
             },
-            handleimageInput(){
+            handleimageInput() {
                 console.log("handleimageInput")
                 const fileInput = document.getElementById('imageInput');
 
                 const file = fileInput.files[0];
                 if (file) {
                     const reader = new FileReader();
-    
-                    reader.onload =  ()=> {
-                        var o={
-                            image:reader.result,
-                            base64Output:reader.result.split(',')[1]
+
+                    reader.onload = () => {
+                        var o = {
+                            image: reader.result,
+                            base64Output: reader.result.split(',')[1]
                         }
-                        this.attNameRef='src'
-                        this.attValueRef=reader.result
-                       console.log(o)
+                        this.attNameRef = 'src'
+                        this.attValueRef = reader.result
+                        console.log(o)
                     };
-    
+
                     reader.readAsDataURL(file);
-                } 
+                }
             }
         };
     });
