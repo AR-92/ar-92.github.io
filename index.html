@@ -9,6 +9,7 @@
     <script src="./tailwindConfig.js"></script>
     <link rel="stylesheet" href="./animate.css" />
     <link rel="stylesheet" href="./custom.css" />
+    <script src="./utils.js"></script>
   </head>
   <body x-data="tailBlast" :class="backgroundColor">
     <tailBlast
@@ -766,6 +767,41 @@
                   </svg>
                   <div>Past Here</div>
                 </past>
+                <pastClip
+                class="flex gap-3 hover:text-green-500 p-2 cursor-pointer"
+                x-data="{ isAnimating: false }"
+                @mouseenter="isAnimating = true"
+                @animationend="isAnimating = false"
+                @click="pasteFromClip()"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="w-5 h-5 animate__animated"
+                  viewBox="0 0 512 512"
+                >
+                  <rect
+                    x="128"
+                    y="128"
+                    width="336"
+                    height="336"
+                    rx="57"
+                    ry="57"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-linejoin="round"
+                    stroke-width="32"
+                  />
+                  <path
+                    d="M383.5 128l.5-24a56.16 56.16 0 00-56-56H112a64.19 64.19 0 00-64 64v216a56.16 56.16 0 0056 56h24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="32"
+                  />
+                </svg>
+                <div>Past from clipboard</div>
+              </pastClip>
                 <delete
                   @click="deleteAll"
                   class="flex gap-3 hover:text-red-500 p-2 cursor-pointer"
@@ -1033,7 +1069,7 @@
                 :class="{ 'border border-green-500 text-green-500': dragIndex === index }"
                 class="flex relative justify-between cursor-pointer p-2 rounded-lg"
               >
-                <intro class="flex gap-3 hover:text-green-500">
+                <intro class="flex gap-3 group hover:text-green-500">
                   <svg
                     x-show="f.isFolder===true"
                     xmlns="http://www.w3.org/2000/svg"
@@ -1093,6 +1129,7 @@
                     @click="currentlySelected(f)"
                     x-text="f.name"
                   ></name>
+                  <classes class="truncate overflow-hidden text-xs m-auto max-w-[100px] group-hover:text-orange-500" x-text="showClassesEle(f)"></classes>
                 </intro>
                 <icons class="flex">
                   <svg
@@ -1398,7 +1435,7 @@
             <header class="m-auto  w-full">tailBlast Editor</header>
           </header>
           <general class="flex flex-col gap-2">
-            <header class="my-2">General</header>
+            <header class="p-2 flex justify-between "><div>General</div><div class="hover:text-blue-500 text-green-500 cursor-pointer">more...</div></header>
 
             <input
               x-model="element.name"
@@ -1450,7 +1487,7 @@
             </div>
           </general>
           <content>
-            <header class="my-2">Inner Content</header>
+            <header class="p-2 flex justify-between "><div>Inner Content</div><div class="hover:text-blue-500 text-green-500 cursor-pointer">more...</div></header>
 
             <div class="flex gap-2">
               <textarea
@@ -1463,7 +1500,8 @@
             </div>
           </content>
           <attributes>
-            <header class="my-2">Attribute</header>
+            <header class="p-2 flex justify-between "><div>Attribute</div><div class="hover:text-blue-500 text-green-500 cursor-pointer">more...</div></header>
+
 
             <div class="flex gap-2">
               <div class="flex flex-col gap-2">
@@ -1595,7 +1633,7 @@
             </div>
           </attributes>
 
-          <footer class="flex justify-between">
+          <footer class="flex justify-between border-t border-slate-100 dark:border-slate-700 mt-1 pt-1">
             <back
               @click="backProject()"
               x-data="{ isAnimating: false }"
