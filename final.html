@@ -837,36 +837,70 @@
                   </svg>
                   <div class="">Download HTML</div>
                 </downloadHTML>
-                <preview
-                x-show="currentItem.isFile || currentItem.isElement"
-                class="flex gap-3 hover:text-purple-500 p-2 cursor-pointer"
-                @click="preview()"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  class="w-5 h-5 animate__animated"
-                  viewBox="0 0 512 512"
+                <importHTML
+                  x-show="currentItem.isFolder"
+                  @click="importHtmlFile"
+                  class="flex gap-3 hover:text-orange-500 p-2 cursor-pointer"
+                  x-data="{ isAnimating: false }"
+                  @mouseenter="isAnimating = true"
+                  @animationend="isAnimating = false"
                 >
-                  <path
-                    d="M255.66 112c-77.94 0-157.89 45.11-220.83 135.33a16 16 0 00-.27 17.77C82.92 340.8 161.8 400 255.66 400c92.84 0 173.34-59.38 221.79-135.25a16.14 16.14 0 000-17.47C428.89 172.28 347.8 112 255.66 112z"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="32"
+                  <input
+                    type="file"
+                    style="display: none"
+                    id="htmlFileInput"
+                    x-ref="htmlFileInput"
+                    accept=".html"
+                    x-on:change="handlehtmlFileInput"
                   />
-                  <circle
-                    cx="256"
-                    cy="256"
-                    r="80"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-miterlimit="10"
-                    stroke-width="32"
-                  />
-                </svg>
-                <name>Preview</name>
-              </preview>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    :class="{'animate__rotateIn': isAnimating}"
+                    class="w-5 h-5 animate__animated"
+                    viewBox="0 0 512 512"
+                  >
+                    <path
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="32"
+                      d="M160 368L32 256l128-112M352 368l128-112-128-112M192 288.1l64 63.9 64-63.9M256 160v176.03"
+                    />
+                  </svg>
+                  <div class="">Import HTML File</div>
+                </importHTML>
+                <preview
+                  x-show="currentItem.isFile || currentItem.isElement"
+                  class="flex gap-3 hover:text-purple-500 p-2 cursor-pointer"
+                  @click="preview()"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-5 h-5 animate__animated"
+                    viewBox="0 0 512 512"
+                  >
+                    <path
+                      d="M255.66 112c-77.94 0-157.89 45.11-220.83 135.33a16 16 0 00-.27 17.77C82.92 340.8 161.8 400 255.66 400c92.84 0 173.34-59.38 221.79-135.25a16.14 16.14 0 000-17.47C428.89 172.28 347.8 112 255.66 112z"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="32"
+                    />
+                    <circle
+                      cx="256"
+                      cy="256"
+                      r="80"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-miterlimit="10"
+                      stroke-width="32"
+                    />
+                  </svg>
+                  <name>Preview</name>
+                </preview>
               </list>
             </dropdown>
           </header>
@@ -1264,7 +1298,6 @@
                         </svg>
                         <name>Delete this item</name>
                       </deleteItem>
-                     
                     </list>
                   </dropdown>
                 </icons>
@@ -1338,156 +1371,204 @@
           >
             <header class="m-auto">tailBlast Editor</header>
           </header>
-          <header class="my-2">General</header>
+          <general class="flex flex-col gap-2">
+            <header class="my-2">General</header>
 
-          <input
-            x-model="element.name"
-            class="p-2 h-8 w-full outline-none dark:bg-slate-700 bg-slate-100 rounded-lg"
-            placeholder="Please Enter Your Element Name Here ..."
-            type="text"
-          />
-          <input
-            @keyup.enter="addClass($el)"
-            class="p-2 h-8 w-full outline-none dark:bg-slate-700 bg-slate-100 rounded-lg"
-            placeholder="Please Enter Your Classes Here ..."
-            type="text"
-          />
-
-          <div class="flex flex-auto flex-wrap">
-            <template x-for="(c, index) in element.classes">
-              <div
-                x-data="{ isAnimating: false }"
-                @mouseenter="isAnimating = true"
-                @animationend="isAnimating = false"
-                class="flex cursor-pointer justify-center items-center hover:text-red-500 hover:bg-red-100 m-1 font-medium py-1 px-2 bg-white rounded-md text-green-700 bg-green-100 dark:bg-slate-800 border border-green-300 hover:border-red-500"
-              >
+            <input
+              x-model="element.name"
+              class="p-2 h-8 w-full outline-none dark:bg-slate-700 bg-slate-100 rounded-lg"
+              placeholder="Please Enter Your Element Name Here ..."
+              type="text"
+            />
+            <input
+              @keyup.enter="addClass($el)"
+              class="p-2 h-8 w-full outline-none dark:bg-slate-700 bg-slate-100 rounded-lg"
+              placeholder="Please Enter Your Classes Here ..."
+              type="text"
+            />
+            <div class="flex flex-auto flex-wrap">
+              <template x-for="(c, index) in element.classes">
                 <div
-                  x-text="c"
-                  class="text-xs font-normal leading-none max-w-full flex-initial"
-                ></div>
-                <div class="flex flex-auto flex-row-reverse">
-                  <div>
-                    <svg
-                      @click="removeClass(index)"
-                      :class="{'animate__rotateIn': isAnimating}"
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="100%"
-                      height="100%"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      class="cursor-pointer hover:text-red-400 rounded-full w-4 h-4 ml-2 animate__animated"
-                    >
-                      <line x1="18" y1="6" x2="6" y2="18"></line>
-                      <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
+                  x-data="{ isAnimating: false }"
+                  @mouseenter="isAnimating = true"
+                  @animationend="isAnimating = false"
+                  class="flex cursor-pointer justify-center items-center hover:text-red-500 hover:bg-red-100 m-1 font-medium py-1 px-2 bg-white rounded-md text-green-700 bg-green-100 dark:bg-slate-800 border border-green-300 hover:border-red-500"
+                >
+                  <div
+                    x-text="c"
+                    class="text-xs font-normal leading-none max-w-full flex-initial"
+                  ></div>
+                  <div class="flex flex-auto flex-row-reverse">
+                    <div>
+                      <svg
+                        @click="removeClass(index)"
+                        :class="{'animate__rotateIn': isAnimating}"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="100%"
+                        height="100%"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="cursor-pointer hover:text-red-400 rounded-full w-4 h-4 ml-2 animate__animated"
+                      >
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                      </svg>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </template>
-          </div>
-          <header class="my-2">Inner Content</header>
+              </template>
+            </div>
+          </general>
+          <content>
+            <header class="my-2">Inner Content</header>
 
-          <div class="flex gap-2">
-            <textarea
-              x-model="element.content"
-              placeholder="Please Enter Your Content Here ..."
-              class="p-2 w-full outline-none dark:bg-slate-700 bg-slate-100 rounded-lg"
-              cols="30"
-              rows="1"
-            ></textarea>
-          </div>
-          <header class="my-2">Attribute</header>
-
-          <div class="flex gap-2">
-            <div class="flex flex-col gap-2">
-              <input
-                x-model="attNameRef"
-                class="p-2 h-8 w-full outline-none dark:bg-slate-700 bg-slate-100 rounded-lg"
-                placeholder="Please Enter Your Attribute Here ..."
-                type="text"
-              />
+            <div class="flex gap-2">
               <textarea
-                x-model="attValueRef"
-                placeholder="Please Enter Your Property Here ..."
+                x-model="element.content"
+                placeholder="Please Enter Your Content Here ..."
                 class="p-2 w-full outline-none dark:bg-slate-700 bg-slate-100 rounded-lg"
                 cols="30"
                 rows="1"
               ></textarea>
             </div>
-          </div>
-          <div
-            @click="addAttribute($refs.name,$refs.value)"
-            class="flex justify-between items-center hover:text-green-500 p-2 cursor-pointer"
-            x-data="{ isAnimating: false }"
-            @mouseenter="isAnimating = true"
-            @animationend="isAnimating = false"
-          >
-            <div class="flex gap-3">
-              <svg
-                :class="{'animate__rotateIn': isAnimating}"
-                xmlns="http://www.w3.org/2000/svg"
-                class="w-5 h-5 m-auto animate__animated"
-                viewBox="0 0 512 512"
-              >
-                <path
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="32"
-                  d="M256 112v288M400 256H112"
+          </content>
+          <attributes>
+            <header class="my-2">Attribute</header>
+
+            <div class="flex gap-2">
+              <div class="flex flex-col gap-2">
+                <input
+                  x-model="attNameRef"
+                  class="p-2 h-8 w-full outline-none dark:bg-slate-700 bg-slate-100 rounded-lg"
+                  placeholder="Please Enter Your Attribute Here ..."
+                  type="text"
                 />
-              </svg>
-              <div class="m-auto">Add Attribute</div>
+                <textarea
+                  x-model="attValueRef"
+                  placeholder="Please Enter Your Property Here ..."
+                  class="p-2 w-full outline-none dark:bg-slate-700 bg-slate-100 rounded-lg"
+                  cols="30"
+                  rows="1"
+                ></textarea>
+              </div>
             </div>
-            <div class="text-gray-500 dark:group-hover:text-slate-100"></div>
-          </div>
-          <div class="flex flex-auto flex-wrap">
-            <template x-for="(a, index) in element.attributes">
+            <div class="flex gap-2 my-2">
               <div
+                @click="addAttribute($refs.name,$refs.value)"
+                class="flex justify-between items-center hover:text-green-500 p-2 cursor-pointer"
                 x-data="{ isAnimating: false }"
                 @mouseenter="isAnimating = true"
                 @animationend="isAnimating = false"
-                class="flex cursor-pointer justify-center items-center hover:text-red-500 hover:bg-red-100 m-1 font-medium py-1 px-2 bg-white rounded-md text-green-700 bg-green-100 dark:bg-slate-800 border border-green-300 hover:border-red-500"
               >
-                <div
-                  x-text="a.name"
-                  class="text-xs font-normal leading-none max-w-full flex-initial"
-                ></div>
-                <div class="mx-1">:</div>
-
-                <div
-                  x-text="a.value"
-                  class="text-xs font-normal w-4 truncate text-clip"
-                ></div>
-                <div class="flex flex-auto flex-row-reverse">
-                  <div>
-                    <svg
-                      @click="removeAttribute(index)"
-                      :class="{'animate__rotateIn': isAnimating}"
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="100%"
-                      height="100%"
+                <div class="flex gap-3">
+                  <svg
+                    :class="{'animate__rotateIn': isAnimating}"
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-5 h-5 m-auto animate__animated"
+                    viewBox="0 0 512 512"
+                  >
+                    <path
                       fill="none"
-                      viewBox="0 0 24 24"
                       stroke="currentColor"
-                      stroke-width="2"
                       stroke-linecap="round"
                       stroke-linejoin="round"
-                      class="cursor-pointer hover:text-red-400 rounded-full w-4 h-4 ml-2 animate__animated"
-                    >
-                      <line x1="18" y1="6" x2="6" y2="18"></line>
-                      <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
+                      stroke-width="32"
+                      d="M256 112v288M400 256H112"
+                    />
+                  </svg>
+                  <div class="m-auto">Add Attribute</div>
+                </div>
+                <div
+                  class="text-gray-500 dark:group-hover:text-slate-100"
+                ></div>
+              </div>
+              <div
+                @click="imageUpload64"
+                class="flex justify-between items-center hover:text-green-500 p-2 cursor-pointer"
+                x-data="{ isAnimating: false }"
+                @mouseenter="isAnimating = true"
+                @animationend="isAnimating = false"
+              >
+                <div class="flex gap-3">
+                  <svg
+                    :class="{'animate__rotateIn': isAnimating}"
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-5 h-5 m-auto animate__animated"
+                    viewBox="0 0 512 512"
+                  >
+                    <path
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="32"
+                      d="M256 112v288M400 256H112"
+                    />
+                  </svg>
+
+                  <input
+                  type="file"
+                  style="display: none"
+                  id="imageInput"
+                  x-ref="imageInput"
+                  x-on:change="handleimageInput"
+                />
+                  <div class="m-auto">upload Image</div>
+                </div>
+                <div
+                  class="text-gray-500 dark:group-hover:text-slate-100"
+                ></div>
+              </div>
+            </div>
+
+            <div class="flex flex-auto flex-wrap">
+              <template x-for="(a, index) in element.attributes">
+                <div
+                  x-data="{ isAnimating: false }"
+                  @mouseenter="isAnimating = true"
+                  @animationend="isAnimating = false"
+                  class="flex cursor-pointer justify-center items-center hover:text-red-500 hover:bg-red-100 m-1 font-medium py-1 px-2 bg-white rounded-md text-green-700 bg-green-100 dark:bg-slate-800 border border-green-300 hover:border-red-500"
+                >
+                  <div
+                    x-text="a.name"
+                    class="text-xs font-normal leading-none max-w-full flex-initial"
+                  ></div>
+                  <div class="mx-1">:</div>
+
+                  <div
+                    x-text="a.value"
+                    class="text-xs font-normal w-4 truncate text-clip"
+                  ></div>
+                  <div class="flex flex-auto flex-row-reverse">
+                    <div>
+                      <svg
+                        @click="removeAttribute(index)"
+                        :class="{'animate__rotateIn': isAnimating}"
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="100%"
+                        height="100%"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="cursor-pointer hover:text-red-400 rounded-full w-4 h-4 ml-2 animate__animated"
+                      >
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                      </svg>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </template>
-          </div>
+              </template>
+            </div>
+          </attributes>
+
           <footer class="flex justify-between">
             <back
               @click="backProject()"

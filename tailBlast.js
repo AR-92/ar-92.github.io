@@ -180,7 +180,35 @@ function getDate() {
     console.log(formattedDate); // Output: "October-23rd-2023-7:47:35-pm"
     return formattedDate
 }
+function parseHtmlToJSObject(htmlContent) {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(htmlContent, "text/html");
+    const rootElement = doc.documentElement;
 
+    function parseElement(element) {
+        const obj = {
+            name: element.tagName,
+            children: [],
+            classes: Array.from(element.classList),
+            attributes: [],
+            content: element.textContent.trim(),
+            isElement: true,
+            id: Date.now(),
+        };
+
+        Array.from(element.attributes).forEach(attribute => {
+            obj.attributes.push({ name: attribute.name, value: attribute.value });
+        });
+
+        for (let child = element.firstElementChild; child; child = child.nextElementSibling) {
+            obj.children.push(parseElement(child));
+        }
+
+        return obj;
+    }
+
+    return parseElement(rootElement);
+}
 document.addEventListener("alpine:init", () => {
     Alpine.data("tailBlast", () => {
         return {
@@ -397,11 +425,11 @@ document.addEventListener("alpine:init", () => {
                 this.currentItem = this.root;
                 this.getNavState();
                 // Listen for events from the iframe
-                window.addEventListener('message',  (event)=> {
+                window.addEventListener('message', (event) => {
                     if (event.data.type === 'CustomEventFromIframe') {
                         const eventData = event.data.data;
                         // Handle the event data
-                        var o=findObjectById(this.root, eventData.id);
+                        var o = findObjectById(this.root, eventData.id);
                         this.openEditor(o)
                         console.log('Received data from the iframe:', eventData.id);
 
@@ -760,6 +788,57 @@ document.addEventListener("alpine:init", () => {
                 const newTab = window.open();
                 newTab.document.write(iframeSrcdocContent);
                 newTab.document.close();
+            },
+            importHtmlFile() {
+                this.$refs.htmlFileInput.click();
+                console.log("importHtmlFile")
+            },
+            handlehtmlFileInput(event) {
+                const file = this.$refs.htmlFileInput.files[0];
+                if (file) {
+                    const reader = new FileReader();
+
+                    reader.onload =  (e)=> {
+                        const htmlContent = e.target.result;
+                        const parsedObject = parseHtmlToJSObject(htmlContent);
+                        const f = parsedObject
+                        // const f = JSON.stringify(parsedObject, null, 2)
+                        console.log("file converted", f, file);
+                        this.currentItem.children.push({
+                            id: Date.now(),
+                            name: f.name,
+                            children: [f],
+                            isFile: true,
+                        })
+                        // document.getElementById("result").textContent = JSON.stringify(parsedObject, null, 2);
+                    };
+
+                    reader.readAsText(file);
+                }
+            },
+            imageUpload64(){
+                this.$refs.imageInput.click();
+            },
+            handleimageInput(){
+                console.log("handleimageInput")
+                const fileInput = document.getElementById('imageInput');
+
+                const file = fileInput.files[0];
+                if (file) {
+                    const reader = new FileReader();
+    
+                    reader.onload =  ()=> {
+                        var o={
+                            image:reader.result,
+                            base64Output:reader.result.split(',')[1]
+                        }
+                        this.attNameRef='src'
+                        this.attValueRef=reader.result
+                       console.log(o)
+                    };
+    
+                    reader.readAsDataURL(file);
+                } 
             }
         };
     });
