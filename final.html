@@ -1067,6 +1067,7 @@
                 @dragover="dragover(index)"
                 @dragend="dragIndex = null"
                 @mouseover="foucsElement(f)"
+                @click="openSub(f)"
                 :class="{ 'border border-green-500 text-green-500': dragIndex === index }"
                 class="flex relative justify-between cursor-pointer p-2 rounded-lg"
               >

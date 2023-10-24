@@ -212,7 +212,11 @@ document.addEventListener("alpine:init", () => {
             getData() {
                 this.root = JSON.parse(localStorage.getItem('root')) ?? this.root;
                 this.currentItem = this.root;
+                this.itemStack = JSON.parse(localStorage.getItem('itemStack')) ?? this.itemStack;
+                this.currentItem = JSON.parse(localStorage.getItem('currentItem')) ?? this.currentItem;
+                this.renderCode = JSON.parse(localStorage.getItem('renderCode')) ?? this.renderCode;
                 this.getNavState();
+                this.render()
                 // Listen for events from the iframe
                 window.addEventListener('message', (event) => {
                     if (event.data.type === 'CustomEventFromIframe') {
@@ -319,6 +323,8 @@ document.addEventListener("alpine:init", () => {
             navto(f) {
                 this.itemStack.push(this.currentItem);
                 this.currentItem = f;
+                localStorage.setItem('itemStack', JSON.stringify(this.itemStack));
+                localStorage.setItem('currentItem', JSON.stringify(this.currentItem));
                 console.log("navigate to >", f)
             },
             navBack() {
@@ -425,6 +431,8 @@ document.addEventListener("alpine:init", () => {
                                 <link rel="stylesheet" href="./custom.css" />`;
                 if (this.currentItem.isFile) {
                     this.renderCode = this.currentItem.children;
+                    localStorage.setItem('renderCode', JSON.stringify(this.renderCode));
+
                 }
                 if (this.currentItem.isFile || this.currentItem.isElement) {
                     // this.renderCode=this.currentItem
@@ -644,12 +652,15 @@ document.addEventListener("alpine:init", () => {
                 if (f.isElement) {
                     console.log(f);
                     const iframe = document.getElementById('pageContent');
-                    const message =  JSON.stringify(f);
+                    const message = JSON.stringify(f);
                     const targetOrigin = '*'; // Use the actual domain of the iframe for security.
 
                     // Send a message to the iframe
                     iframe.contentWindow.postMessage(message, targetOrigin);
                 }
+            },
+            openSub(f) {
+                console.log('openSub>>', f.children)
             }
 
         };
